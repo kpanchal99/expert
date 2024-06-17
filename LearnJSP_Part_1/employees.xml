@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<employees
+          xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+          xsi:noNamespaceSchemaLocation='employee2.xsd'>
+
+    <employee>
+        <id>1</id>
+        <Name>Karan</Name>
+        <Dept>IT</Dept>
+    </employee>
+    <employee>
+        <id>33</id>
+        <Name>Panchal</Name>
+        <Dept>Tech</Dept>
+    </employee>
+</employees>

@@ -1,4 +1,4 @@
-	
+
 /*    public static void main(String[] args) {
         String db_name = "mca";
         String url = "jdbc:mysql://localhost:3306/" + db_name;
@@ -180,7 +180,298 @@ public class SessionIn extends HttpServlet {
 
 */
 
+/* scripting directive page include import 
+
+
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page errorPage="error.jsp"%>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.util.List" %>
+
+<%--<%@include file="header.jsp" %>--%>
+<%--<%@ include file="index.html" %>--%>
+
+<%--<jsp:include page="dynamicContent.jsp" />--%>
+<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <h1>Hello World!</h1>
+        <%= new Date()%>
+
+        <c:out value="${'Welcome to javaTpoint'}"/>  
+        <c:set var="income" scope="session" value="${4000*4}"/>  
+        <c:if test="${income > 8000}">  
+           <p>My income is: <c:out value="${income}"/><p>  
+        </c:if>
+    </body>
+</html>
+
+
+*/
+
+/*  action tags beans 
+
+
+public class UserBean {
+    private String name;
+    private int age;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+}
+
+
+<%@ page contentType="text/html" pageEncoding="UTF-8"%>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>UseBean and Set Example</title>
+    </head>
+    <body>
+        <jsp:useBean id="user" class="com.mycompany.learnjsp_part_1.UserBean" scope="session" />
+        <jsp:setProperty name="user" property="name" value="John Doe" />
+        <jsp:setProperty name="user" property="age" value="30" />
+
+        <h2>User Information</h2>
+        <p>Name: <jsp:getProperty name="user" property="name" /></p>
+        <p>Age: <jsp:getProperty name="user" property="age" /></p>
+    </body>
+</html>
+
+
+*/
+
+/* custom tags / taglib
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!--import tld-->
+<%@ taglib prefix="mca" uri="/WEB-INF/mca_tag.tld" %>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <mca:kjsim />
+    </body>
+</html>
+
+
+public class CustomTags extends SimpleTagSupport{
+
+    // create tld in web-inf .tld
+//	<?xml version="1.0" encoding="UTF-8"?>
+//	<taglib version="2.1" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd">
+//	  <tlib-version>1.0</tlib-version>
+//	  <short-name>mca_tag</short-name>
+//	  <uri>/WEB-INF/mca_tag</uri>
+//		  <tag>
+//			  <name>kjsim</name>
+//			  <tag-class>com.mycompany.learnjsp_part_1.CustomTags</tag-class>
+//			 <body-content>empty</body-content>
+//		  </tag>
+//	</taglib>
+
+    @Override
+    public void doTag() throws JspException, IOException {
+        getJspContext().getOut().write("Karan (MCA KJSIM)");
+    }
+    
+}
+
+*/
+
 /* XML 
+create xml
+public class CreateXMLFile {
+    
+    public static void main(String[] args) {
+        
+        try{
+            Document document = (Document) DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            //root node
+            Element students = document.createElement("students");
+            document.appendChild(students);
+            
+            //child node
+            String[][] student = {
+                new String[] {"1","Karan","8.10"},
+                new String[] {"33","Panchal","9.0"},
+            };
+            for(String[] stud : student){
+                //child root element
+                Element std = document.createElement("student");
+                
+                Element title = document.createElement("id");               
+                Text titleText = document.createTextNode(stud[0]);
+            
+                title.appendChild(titleText);
+            
+                Element name = document.createElement("Name");               
+                Text nameText = document.createTextNode(stud[1]);               
+                name.appendChild(nameText);
+                
+                Element grade = document.createElement("Grade");               
+                Text gradeText = document.createTextNode(stud[2]);               
+                grade.appendChild(gradeText);
+                
+                std.appendChild(title);
+                std.appendChild(name);
+                std.appendChild(grade);
+                
+                students.appendChild(std);
+            }
+            
+            // Write to XML FILE
+            TransformerFactory transformerfactory = TransformerFactory.newInstance();
+            transformerfactory.newTransformer().transform(new DOMSource(document), new StreamResult("student.xml"));
+            
+            
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        finally{
+            System.out.println("Created XML");
+        }
+    }
+}
+
+validate dtd
+
+
+    // create DTD for this 
+    //<!DOCTYPE students SYSTEM "student.dtd">
+  //  <?xml version="1.0" encoding="UTF-8"?>
+  //  <!ELEMENT students (student+)>
+  //  <!ELEMENT student (id, name, grade)>
+   // <!ELEMENT id (#PCDATA)>
+   // <!ELEMENT name (#PCDATA)>
+ //   <!ELEMENT grade (#PCDATA)>
+    
+public class ValidateWithDTD extends DefaultHandler{
+
+    public static void main(String[] args) {
+       
+        try {
+            ValidateWithDTD v = new ValidateWithDTD();
+            v.validateXML();
+            System.out.println("Successfully validated");
+        } catch (Exception e) {
+            System.out.println("Successfully failed");
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    public void validateXML() throws IOException, ParserConfigurationException, SAXException{
+        String xmlFile = "student.xml";
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setValidating(true);
+        factory.setNamespaceAware(true);
+
+        SAXParser parser = factory.newSAXParser(); // dtd file
+        XMLReader reader = parser.getXMLReader();
+        reader.setErrorHandler(this);
+
+        reader.parse(new InputSource(xmlFile));
+    }
+    @Override
+    public void fatalError(SAXParseException e) throws SAXException {
+        super.fatalError(e); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+    }
+
+    @Override
+    public void error(SAXParseException e) throws SAXException {
+        super.error(e); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+    }
+
+    @Override
+    public void warning(SAXParseException e) throws SAXException {
+        super.warning(e); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+    }
+    
+}
+
+
+
+
+	// add to xml file
+//        <employees
+//          xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+//          xsi:noNamespaceSchemaLocation='student.xsd'>
+
+public class ValidateWithXSD {
+
+    public static void main(String[] args) {
+        try {
+            // Create a SchemaFactory and specify XML Schema language
+            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+            // Load the XML Schema from file
+            Schema schema = factory.newSchema(new File("studentXSD.xsd"));
+
+            // Create a Validator object for the Schema
+            Validator validator = schema.newValidator();
+
+            // Validate the XML document against the Schema
+            validator.validate(new StreamSource(new File("student.xml")));
+
+            System.out.println("Validation successful: XML document is valid.");
+        } catch (SAXException e) {
+            System.out.println("Validation failed: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("IO Error: " + e.getMessage());
+        }
+    }
+}
+
+
+create xsd file
+<xs:schema version="1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+     <xs:element name="employees">
+         <xs:complexType>
+             <xs:sequence>
+                 <xs:element name="employee" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="id" type="xs:int"/>
+                            <xs:element name="Name" type="xs:string"/>
+                            <xs:element name="Depte" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                 </xs:element>
+             </xs:sequence>
+         </xs:complexType>
+     </xs:element>
+</xs:schema>
+
 
 */
 
@@ -315,6 +606,7 @@ public class NativeSQLExample {
 	<artifactId>spring-context</artifactId>
 	<version>5.3.15</version>
 </dependency>
+
 
 
 <dependency>

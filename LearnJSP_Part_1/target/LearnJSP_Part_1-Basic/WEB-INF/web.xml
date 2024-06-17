@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="4.0" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
+    <context-param>
+        <param-name>appName</param-name>
+        <param-value>MyWebApp</param-value>
+    </context-param>
+    
+    
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>com.mycompany.learnjsp_part_1.LoginServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SessionIn</servlet-name>
+        <servlet-class>com.mycompany.learnjsp_part_1.SessionIn</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SessionOut</servlet-name>
+        <servlet-class>com.mycompany.learnjsp_part_1.SessionOut</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ServletConfig_Context</servlet-name>
+        <servlet-class>com.mycompany.learnjsp_part_1.ServletConfig_Context</servlet-class>
+        <init-param>
+            <param-name>jdbc_url</param-name>
+            <param-value>llocalhost:3306</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/LoginServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SessionIn</servlet-name>
+        <url-pattern>/SessionIn</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SessionOut</servlet-name>
+        <url-pattern>/SessionOut</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ServletConfig_Context</servlet-name>
+        <url-pattern>/ServletConfig_Context</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+</web-app>

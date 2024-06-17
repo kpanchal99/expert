@@ -1,0 +1,5 @@
+com\mycompany\learnservlet\JAXRSConfiguration.class
+com\mycompany\learnservlet\resources\JavaEE8Resource.class
+com\mycompany\learnservlet\ServletConfig_n_Content.class
+com\mycompany\learnservlet\MyFilter.class
+com\mycompany\learnservlet\LoginServlet.class

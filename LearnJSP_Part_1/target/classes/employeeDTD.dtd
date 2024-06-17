@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT employees (employee+)>
+<!ELEMENT employee (id, Name, Dept)>
+<!ELEMENT id (#PCDATA)>
+<!ELEMENT Name (#PCDATA)>
+<!ELEMENT Dept (#PCDATA)>

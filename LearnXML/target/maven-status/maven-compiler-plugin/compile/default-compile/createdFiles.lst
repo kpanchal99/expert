@@ -1,0 +1,5 @@
+com\mycompany\learnxml\CreateXMLFile.class
+com\mycompany\learnxml\JAXRSConfiguration.class
+com\mycompany\learnxml\resources\JavaEE8Resource.class
+com\mycompany\learnxml\ValidateWithXSD.class
+com\mycompany\learnxml\ValidateWithDTD.class
