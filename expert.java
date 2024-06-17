@@ -62,6 +62,21 @@ public class GenericServletExample extends GenericServlet {
 
 */
 /*Servlet Config and Context
+
+<context-param>
+        <param-name>appName</param-name>
+        <param-value>MyWebApp</param-value>
+</context-param>
+    <servlet>
+        <servlet-name>ServletConfig_Context</servlet-name>
+        <servlet-class>com.mycompany.learnjsp_part_1.ServletConfig_Context</servlet-class>
+        <init-param>
+            <param-name>jdbc_url</param-name>
+            <param-value>llocalhost:3306</param-value>
+        </init-param>
+    </servlet>
+	
+	
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -505,6 +520,61 @@ create xsd file
 </hibernate-configuration>
 
 
+@Entity
+@Table( name = "Employee")
+public class Employee {
+    
+    @Id
+    private int id;
+    private String firstName; 
+    private String lastName;   
+    private int salary;  
+
+    public Employee() {
+    }
+
+    public Employee(int id, String firstName, String lastName, int salary) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.salary = salary;
+    }
+    
+    
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public int getSalary() {
+        return salary;
+    }
+
+    public void setSalary(int salary) {
+        this.salary = salary;
+    }
+        
+}
+
     public static void main(String[] args) {
         try {
             SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
@@ -562,8 +632,343 @@ public class NativeSQLExample {
 
 */
 
+/* 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CRUD Operations</title>
+</head>
+<body>
+    <h1>User Management</h1>
+    <form action="UserServlet" method="post">
+        <input type="hidden" name="action" id="action">
+
+        <label for="id">User ID:</label>
+        <input type="text" id="id" name="id"><br>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email"><br>
+
+        <button type="button" onclick="setActionAndSubmit('create')">Create</button>
+        <button type="button" onclick="setActionAndSubmit('read')">Read</button>
+        <button type="button" onclick="setActionAndSubmit('update')">Update</button>
+        <button type="button" onclick="setActionAndSubmit('delete')">Delete</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        function setActionAndSubmit(action) {
+            document.getElementById('action').value = action;
+            document.forms[0].submit();
+        }
+    </script>
+</body>
+</html>
+
+@WebServlet("/UserServlet")
+public class UserServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+    private static final String URL = "jdbc:mysql://localhost:3306/exampledb";
+    private static final String USER = "root";
+    private static final String PASSWORD = "password";
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        switch (action) {
+            case "create":
+                createUser(request, response);
+                break;
+            case "read":
+                readUsers(request, response);
+                break;
+            case "update":
+                updateUser(request, response);
+                break;
+            case "delete":
+                deleteUser(request, response);
+                break;
+        }
+    }
+
+    private void createUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        String query = "INSERT INTO users (name, email) VALUES (?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, name);
+            pstmt.setString(2, email);
+            pstmt.executeUpdate();
+            response.getWriter().println("User created successfully.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.getWriter().println("Error creating user.");
+        }
+    }
+
+    private void readUsers(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String query = "SELECT * FROM users";
+
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query);
+             PrintWriter out = response.getWriter()) {
+
+            response.setContentType("text/html");
+            out.println("<h1>User List</h1>");
+            out.println("<table border='1'><tr><th>ID</th><th>Name</th><th>Email</th></tr>");
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String email = rs.getString("email");
+                out.println("<tr><td>" + id + "</td><td>" + name + "</td><td>" + email + "</td></tr>");
+            }
+            out.println("</table>");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.getWriter().println("Error reading users.");
+        }
+    }
+
+    private void updateUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        String query = "UPDATE users SET name = ?, email = ? WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, name);
+            pstmt.setString(2, email);
+            pstmt.setInt(3, id);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                response.getWriter().println("User updated successfully.");
+            } else {
+                response.getWriter().println("User with ID " + id + " not found.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.getWriter().println("Error updating user.");
+        }
+    }
+
+    private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        String query = "DELETE FROM users WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setInt(1, id);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                response.getWriter().println("User deleted successfully.");
+            } else {
+                response.getWriter().println("User with ID " + id + " not found.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.getWriter().println("Error deleting user.");
+        }
+    }
+}
+*/
+
+/*
+add dependency
+create SpringConfig.xml - remove version in xsd line
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+">
+<!--// remvoe vversion in xsd-->
+    <bean id="studentBean" class="com.mycompany.learnspring.Student"></bean>
+</beans>
+  
+  Student.java
+  public class Student {
+    
+    public void display(){
+        System.out.println("hello form spring mvc!!!!!!!!!!!!!!!!!");
+    }
+}
+
+Main.java
+public class Main {
+    public static void main(String[] args) {
+        ApplicationContext context = new  ClassPathXmlApplicationContext("SpringConfig.xml");
+        Student stud = (Student)context.getBean("studentBean");
+        stud.display();
+    }
+}
+
+*/
 
 
+
+/*  check in db table exist or not
+CRUD 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Management</title>
+</head>
+<body>
+    <h2>Add User</h2>
+    <form method="post" action="UserServlet">
+        <input type="hidden" name="action" value="add">
+        Name: <input type="text" name="name"><br>
+        Email: <input type="text" name="email"><br>
+        <input type="submit" value="Add User">
+    </form>
+
+    <h2>Update User</h2>
+    <form method="post" action="UserServlet">
+        <input type="hidden" name="action" value="update">
+        ID: <input type="text" name="id"><br>
+        Name: <input type="text" name="name"><br>
+        Email: <input type="text" name="email"><br>
+        <input type="submit" value="Update User">
+    </form>
+
+    <h2>Delete User</h2>
+    <form method="post" action="UserServlet">
+        <input type="hidden" name="action" value="delete">
+        ID: <input type="text" name="id"><br>
+        <input type="submit" value="Delete User">
+    </form>
+
+    <h2>User List</h2>
+    <form method="get" action="UserServlet">
+        <input type="submit" value="Refresh User List">
+    </form>
+</body>
+</html>
+
+
+public class UserServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    // Database connection settings
+    private static final String DB_NAME = "mca";
+    private static final String URL = "jdbc:mysql://localhost:3306/" + DB_NAME;
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "root";
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+
+        if ("add".equals(action)) {
+            addUser(request, response);
+        } else if ("update".equals(action)) {
+            updateUser(request, response);
+        } else if ("delete".equals(action)) {
+            deleteUser(request, response);
+        }
+    }
+
+    private void addUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+
+        try {
+            // Register JDBC driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // Open a connection
+            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+
+            // Insert a new record
+            String sql = "INSERT INTO users (name, email) VALUES (?, ?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, email);
+            preparedStatement.executeUpdate();
+
+            // Clean-up environment
+            preparedStatement.close();
+            connection.close();
+
+            response.sendRedirect("index.html"); // Redirect to a success page or back to the form
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("Error: " + e.getMessage());
+        }
+    }
+
+    private void updateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+
+        try {
+            // Register JDBC driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // Open a connection
+            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+
+            // Update an existing record
+            String sql = "UPDATE users SET name = ?, email = ? WHERE id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, email);
+            preparedStatement.setInt(3, id);
+            preparedStatement.executeUpdate();
+
+            // Clean-up environment
+            preparedStatement.close();
+            connection.close();
+
+            response.sendRedirect("index.html"); // Redirect to a success page or back to the form
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("Error: " + e.getMessage());
+        }
+    }
+
+    private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        try {
+            // Register JDBC driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // Open a connection
+            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+
+            // Delete a record
+            String sql = "DELETE FROM users WHERE id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+
+            // Clean-up environment
+            preparedStatement.close();
+            connection.close();
+
+            response.sendRedirect("index.html"); // Redirect to a success page or back to the form
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().println("Error: " + e.getMessage());
+        }
+    }
+}
+*/
 /*Required POM
 
 
@@ -595,20 +1000,23 @@ public class NativeSQLExample {
 </dependency>
 
 
+//MVC
+              
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>5.2.8.RELEASE</version>
+        </dependency>
 
-<dependency>
-	 <groupId>org.springframework</groupId>
-	<artifactId>spring-core</artifactId>
-	<version>5.3.15</version>
-</dependency>
- <dependency>
-	 <groupId>org.springframework</groupId>
-	<artifactId>spring-context</artifactId>
-	<version>5.3.15</version>
-</dependency>
+        <!-- Spring Context -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>5.2.8.RELEASE</version>
+        </dependency>
 
 
-
+//web
 <dependency>
 	<groupId>org.springframework</groupId>
 	<artifactId>spring-web</artifactId>
