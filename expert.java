@@ -1,4 +1,68 @@
+https://www.pvpsiddhartha.ac.in/dep_it/lecture%20notes/itlecture2_pvp14.html
 https://www.pvpsiddhartha.ac.in/dep_it/lecture%20notes/STM/STM_UNIT%202.pdf
+
+////=====================================================================================================================
+// no chrome driver req after selenium 4
+// maven pom
+     <!-- Selenium Java dependency -->
+        <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>4.22.0</version>
+        </dependency>
+                <!-- WebDriverManager dependency --><!-- https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager -->
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>5.8.0</version>
+        </dependency>
+//=====================================================================================================================
+//working code below
+
+package com.mycompany.testsqa;
+
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+public class NewClass {
+        public static void main(String[] args) throws InterruptedException {
+		// TODO Auto-generated method stub
+//        System.setProperty("webdriver.chrome.driver","E:\\chromedriver\\chromedriver-win64\\chromedriver.exe");
+        WebDriver driver = new ChromeDriver();
+    	
+        String baseUrl = "http://demo.guru99.com/test/newtours/";
+        String expectedTitle = "Welcome: Mercury Tours";
+        String actualTitle = "";
+
+        // launch browser and direct it to the Base URL
+        driver.get(baseUrl);
+
+        // get the actual value of the title
+        actualTitle = driver.getTitle();
+        
+        WebElement userNameInput = driver.findElement(By.xpath("//input[@name='userName']"));
+        WebElement passwordInput = driver.findElement(By.xpath("//input[@name='password']"));
+            // Perform actions on the input element
+            userNameInput.sendKeys("karan.dp");
+            passwordInput.sendKeys("karan.dp"); // Enter text into the input field
+        Thread.sleep(2000);
+
+		//check page title
+        if (actualTitle.contentEquals(expectedTitle)){
+            System.out.println("Test Passed!");
+        } else {
+            System.out.println("Test Failed");
+        }
+        //close browser
+        driver.close();
+	}
+}
+//===============================================================================================================
+// additional changes from below
+
 //how to wait in code
 WebDriverWait wait=new WebDriverWait(driver, Duration.ofSeconds(20));
 
@@ -92,44 +156,3 @@ WebElement userNameInpu = driver.find_element(By.XPATH, "//*[@id='product_descri
 
 
 
-package com.mycompany.testsqa;
-
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-public class NewClass {
-        public static void main(String[] args) throws InterruptedException {
-		// TODO Auto-generated method stub
-//        System.setProperty("webdriver.chrome.driver","E:\\chromedriver\\chromedriver-win64\\chromedriver.exe");
-        WebDriver driver = new ChromeDriver();
-    	
-        String baseUrl = "http://demo.guru99.com/test/newtours/";
-        String expectedTitle = "Welcome: Mercury Tours";
-        String actualTitle = "";
-
-        // launch browser and direct it to the Base URL
-        driver.get(baseUrl);
-
-        // get the actual value of the title
-        actualTitle = driver.getTitle();
-        
-        WebElement userNameInput = driver.findElement(By.xpath("//input[@name='userName']"));
-        WebElement passwordInput = driver.findElement(By.xpath("//input[@name='password']"));
-            // Perform actions on the input element
-            userNameInput.sendKeys("karan.dp");
-            passwordInput.sendKeys("karan.dp"); // Enter text into the input field
-        Thread.sleep(2000);
-
-        if (actualTitle.contentEquals(expectedTitle)){
-            System.out.println("Test Passed!");
-        } else {
-            System.out.println("Test Failed");
-        }
-       
-        //close browser
-        driver.close();
-
-	}
-}
