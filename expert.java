@@ -1,3 +1,4 @@
+https://www.pvpsiddhartha.ac.in/dep_it/lecture%20notes/STM/STM_UNIT%202.pdf
 //how to wait in code
 WebDriverWait wait=new WebDriverWait(driver, Duration.ofSeconds(20));
 
